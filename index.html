@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico Diagnóstico - Uma Vida Dupla (Lidere 2026)</title>
+    <!-- Tailwind CSS para estilização moderna e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes do Google (Inter para legibilidade limpa e técnica) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+        }
+        .transition-width {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+    <!-- HEADER DO INFOGRÁFICO -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-4 sm:px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center shadow-lg shadow-rose-900/30">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold tracking-wider uppercase text-rose-500 bg-rose-950/50 px-2 py-0.5 rounded-full border border-rose-800/30">Lidere 2026</span>
+                        <span class="text-xs text-slate-400 font-medium">Palavra da Vida | Igreja Local</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-100 tracking-tight">Uma Vida Dupla <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-amber-500 font-medium">// O Infográfico</span></h1>
+                </div>
+            </div>
+            
+            <!-- CONTROLE DE AUDIÊNCIA (TABS) -->
+            <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex w-full md:w-auto overflow-x-auto">
+                <button onclick="switchTab('consolidado')" id="btn-consolidado" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap bg-rose-600 text-white shadow-md">
+                    Geral (Consolidado)
+                </button>
+                <button onclick="switchTab('w1')" id="btn-w1" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                    Workshop 1 (26+ anos)
+                </button>
+                <button onclick="switchTab('w2')" id="btn-w2" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                    Workshop 2 (Até 25 anos)
+                </button>
+                <button onclick="switchTab('comparativo')" id="btn-comparativo" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                    Lado a Lado
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 sm:px-6 w-full space-y-8">
+        
+        <!-- SEÇÃO DO METRO DA PESQUISA / OVERVIEW -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total de Respondentes</span>
+                    <h2 class="text-3xl font-extrabold text-white mt-1" id="stat-respondentes">47 Líderes</h2>
+                </div>
+                <p class="text-xs text-slate-400 mt-2">Mapeamento anônimo e voluntário realizado em tempo real nas duas sessões da conferência.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">Exposição Precoce (&lt;13 anos)</span>
+                    <h2 class="text-3xl font-extrabold text-rose-500 mt-1" id="stat-precoce">58.7%</h2>
+                </div>
+                <p class="text-xs text-slate-400 mt-2">Mais da metade dos líderes presentes tiveram contato com pornografia na infância ou pré-adolescência.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-500">Silêncio Histórico (Tabu)</span>
+                    <h2 class="text-3xl font-extrabold text-amber-500 mt-1" id="stat-tabu">63.8%</h2>
+                </div>
+                <p class="text-xs text-slate-400 mt-2">Cresceram sabendo que confessar fraquezas sexuais na igreja resultaria em punição ou vergonha pública.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Necessitam de Ferramentas</span>
+                    <h2 class="text-3xl font-extrabold text-emerald-400 mt-1" id="stat-preparo">66.0%</h2>
+                </div>
+                <p class="text-xs text-slate-400 mt-2">Líderes que declararam ter amor e boa vontade, mas que não possuem metodologia prática de aconselhamento.</p>
+            </div>
+        </section>
+
+        <!-- SEÇÃO DO CALCULE SEU IMPACTO (FERRAMENTA INTERATIVA DO JACOB) -->
+        <section class="bg-gradient-to-br from-slate-900 to-slate-950 border-2 border-rose-900/30 p-6 rounded-2xl shadow-xl">
+            <div class="max-w-4xl">
+                <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <span class="flex h-3 w-3 relative">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                    </span>
+                    Ferramenta de Diagnóstico Local: Aplique estes dados à sua Igreja
+                </h3>
+                <p class="text-sm text-slate-400 mt-1">Estime o cenário real invisível no seu grupo de adolescentes baseado nos padrões descobertos no Lidere 2026.</p>
+                
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <label for="group-size" class="block text-xs font-bold uppercase tracking-wider text-slate-300">Quantidade de Liderados (Adolescentes)</label>
+                        <div class="flex items-center gap-3 mt-2">
+                            <input type="number" id="group-size" value="40" min="5" max="1000" oninput="calculateImpact()" class="bg-slate-950 text-white font-extrabold text-2xl w-24 p-2 rounded-lg border border-slate-800 focus:outline-none focus:border-rose-500 text-center">
+                            <span class="text-slate-400 font-medium">adolescentes</span>
+                        </div>
+                        <input type="range" id="group-slider" min="5" max="250" value="40" oninput="syncSlider()" class="w-full mt-4 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500">
+                    </div>
+
+                    <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/40 text-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Perfis Secretos ("Finsta")</span>
+                            <p class="text-2xl font-black text-rose-500 mt-1" id="calc-finsta">20</p>
+                            <span class="text-[10px] text-slate-500">provavelmente usam contas ocultas dos pais</span>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/40 text-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Exposição a Pornografia</span>
+                            <p class="text-2xl font-black text-amber-500 mt-1" id="calc-exposicao">23</p>
+                            <span class="text-[10px] text-slate-500">já terão tido acesso antes de fazer 13 anos</span>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/40 text-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Líderes Despreparados</span>
+                            <p class="text-2xl font-black text-emerald-400 mt-1" id="calc-despreparo">2</p>
+                            <span class="text-[10px] text-slate-500">em cada 3 líderes não sabem como aconselhá-los</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRID PRINCIPAL DE RESULTADOS -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="graphs-grid">
+            
+            <!-- CARD 1: FAIXA ETÁRIA -->
+            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">1. Quem é o Líder Respondente?</h4>
+                        <span class="text-xs font-semibold text-slate-400 bg-slate-800 px-2 py-1 rounded">Faixa Etária</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1 mb-6">Mapeamento de idade para entender o contraste de percepção cultural e digital.</p>
+                    
+                    <div class="space-y-4" id="chart-etaria">
+                        <!-- Gerado via Javascript dinamicamente -->
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
+                    <strong class="text-rose-400 font-semibold shrink-0">Insight:</strong>
+                    <span>O Workshop 1 foi composto por líderes experientes (26 a 40 anos), enquanto o Workshop 2 mobilizou os jovens líderes voluntários que estão na ponta do ministério (&lt;25 anos).</span>
+                </div>
+            </div>
+
+            <!-- CARD 2: IDADE DE PRIMEIRO CONTATO -->
+            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">2. O Início: Primeiro Contato com Pornografia</h4>
+                        <span class="text-xs font-semibold text-rose-400 bg-rose-950/30 px-2 py-1 rounded border border-rose-900/30">Precocidade</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1 mb-6">Em qual momento da vida ocorreu o primeiro contato com conteúdo erótico na internet ou meios analógicos?</p>
+                    
+                    <div class="space-y-4" id="chart-contato">
+                        <!-- Gerado via Javascript dinamicamente -->
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
+                    <strong class="text-rose-400 font-semibold shrink-0">Bíblico/Prático:</strong>
+                    <span>A exposição ocorre na infância e início da adolescência. O discipulado de pureza não pode esperar até o jovem ter 17-18 anos; a prevenção precisa começar aos 10 anos.</span>
+                </div>
+            </div>
+
+            <!-- CARD 3: O TABU HISTÓRICO -->
+            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">3. O Histórico: Espaço Seguro para Confissão</h4>
+                        <span class="text-xs font-semibold text-amber-400 bg-amber-950/30 px-2 py-1 rounded border border-amber-900/30">Ambiente de Graça</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1 mb-6">"Na sua época de adolescente, você tinha um espaço seguro na igreja para confessar lutas na área de sexualidade?"</p>
+                    
+                    <div class="space-y-4" id="chart-tabu">
+                        <!-- Gerado via Javascript dinamicamente -->
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
+                    <strong class="text-amber-400 font-semibold shrink-0">Diagnóstico:</strong>
+                    <span>Quase dois terços dos líderes herdaram a herança do tabu absoluto. Isso explica por que, intuitivamente, a igreja de hoje tende a silenciar em vez de pastorear preventivamente.</span>
+                </div>
+            </div>
+
+            <!-- CARD 4: REDES OCULTAS -->
+            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">4. A Realidade Invisível: Perfis Escondidos ("Finsta")</h4>
+                        <span class="text-xs font-semibold text-indigo-400 bg-indigo-950/30 px-2 py-1 rounded border border-indigo-900/30">Comportamento Digital</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1 mb-6">"Quantos dos seus liderados você estima que possuem perfis fechados e ocultos dos pais e líderes?"</p>
+                    
+                    <div class="space-y-4" id="chart-redes">
+                        <!-- Gerado via Javascript dinamicamente -->
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
+                    <strong class="text-indigo-400 font-semibold shrink-0">Alerta:</strong>
+                    <span>Mais de 50% dos líderes sabem que a grande maioria de seus jovens operam contas ocultas (Finstas). O discipulado não pode ser feito apenas com base no que eles postam no perfil oficial.</span>
+                </div>
+            </div>
+
+            <!-- CARD 5: APAGÃO CONCEITUAL -->
+            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">5. O Abismo Técnico: Termos Teen Pop/Digital</h4>
+                        <span class="text-xs font-semibold text-violet-400 bg-violet-950/30 px-2 py-1 rounded border border-violet-900/30">Conexão Cultural</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1 mb-6">"Você conhece o significado prático de termos como Finsta, Ecchi, Fanservice, Sexting e Fanfiction?"</p>
+                    
+                    <div class="space-y-4" id="chart-termos">
+                        <!-- Gerado via Javascript dinamicamente -->
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
+                    <strong class="text-violet-400 font-semibold shrink-0">O Abismo:</strong>
+                    <span>Cerca de 76% dos líderes admitem que não dominam ou nunca ouviram falar destes termos digitais cotidianos. Há uma barreira de comunicação crítica a ser vencida.</span>
+                </div>
+            </div>
+
+            <!-- CARD 6: PREPARO PASTORAL -->
+            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">6. Preparo Prático para o Aconselhamento</h4>
+                        <span class="text-xs font-semibold text-emerald-400 bg-emerald-950/30 px-2 py-1 rounded border border-emerald-900/30">Capacitação</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1 mb-6">"Quão preparado você se sente para aconselhar um liderado que confessa vício em pornografia ou envolvimento com sexting?"</p>
+                    
+                    <div class="space-y-4" id="chart-preparo">
+                        <!-- Gerado via Javascript dinamicamente -->
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
+                    <strong class="text-emerald-400 font-semibold shrink-0">Solução:</strong>
+                    <span>A imensa maioria (66%) quer ajudar e ama o liderado, mas carece de um método estruturado (ex: o plano de batalha e as ferramentas de blindagem do workshop).</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SESSÃO DE RECURSOS E AÇÕES RECOMENDADAS PELO PALAVRA DA VIDA -->
+        <section class="bg-slate-900 border border-slate-800/80 p-8 rounded-2xl">
+            <h3 class="text-xl font-bold text-white mb-2">Plano de Batalha Pastoral e Tecnológico</h3>
+            <p class="text-sm text-slate-400 mb-6">Como converter estes diagnósticos desesperadores em restauração prática dentro da Igreja Local:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="text-rose-500 font-bold text-lg flex items-center gap-2 mb-3">
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                            1. Quebre o Silêncio
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Crie espaços pastorais estruturados com base no acolhimento de Jesus. Remova a punição sumária do vocabulário ministerial para lutas confessadas de forma voluntária. No discipulado de juventude, quem confessa primeiro merece graça, orientação e proteção contra o isolamento espiritual.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="text-amber-500 font-bold text-lg flex items-center gap-2 mb-3">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            2. Ensine a Blindagem
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Instrua os pais a ativarem barreiras físicas em roteadores utilizando serviços de DNS Familiar gratuitos (como AdGuard ou Cloudflare Families). Implemente parcerias de prestação de contas ativa no discipulado utilizando ferramentas de inteligência artificial confidencial como o <strong>Covenant Eyes</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="text-emerald-500 font-bold text-lg flex items-center gap-2 mb-3">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            3. Use Metodologias
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Aplique sistematicamente os <strong>4 Passos do Arrependimento Bíblico Genuíno</strong>: Confissão Nominal (nomear o erro bíblico), Tristeza segundo Deus (arrependimento e não mero medo de ser descoberto), Abandono Prático (corte de mídias e conexões perigosas) e Prestação de Contas ativa.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950 text-slate-500 text-center py-6 text-xs mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>Infográfico interativo de dados estruturados e consolidados para o palestrante Jacob. Palavra da Vida - Ministério com a Igreja Local © 2026</p>
+            <p class="mt-1">Todos os dados exibidos foram capturados de forma totalmente anônima via DirectPoll durante o Lidere 2026.</p>
+        </div>
+    </footer>
+
+    <!-- LOGIC SYSTEM (DATA & SWITCHING) -->
+    <script>
+        // Dados Estruturados da Pesquisa Real
+        const dataset = {
+            etaria: {
+                question: "Qual é a sua faixa etária atual?",
+                answers: [
+                    { label: "Até 25 anos", w1: 36.4, w2: 56.0, total: 46.8 },
+                    { label: "Entre 26 e 40 anos", w1: 40.9, w2: 20.0, total: 29.8 },
+                    { label: "Entre 41 e 55 anos", w1: 18.2, w2: 24.0, total: 21.3 },
+                    { label: "Mais de 55 anos", w1: 4.5, w2: 0.0, total: 2.1 }
+                ]
+            },
+            contato: {
+                question: "Com que idade teve seu primeiro contato com pornografia?",
+                answers: [
+                    { label: "Menos de 10 anos", w1: 18.2, w2: 20.8, total: 19.6 },
+                    { label: "Entre 11 e 13 anos", w1: 50.0, w2: 29.2, total: 39.1 },
+                    { label: "Entre 14 e 17 anos", w1: 13.6, w2: 33.3, total: 23.9 },
+                    { label: "18 anos ou mais", w1: 9.1, w2: 16.7, total: 13.0 },
+                    { label: "Nunca tive contato", w1: 9.1, w2: 0.0, total: 4.3 }
+                ]
+            },
+            tabu: {
+                question: "Tinha espaço seguro na igreja para confessar na adolescência?",
+                answers: [
+                    { label: "Não, sexualidade era tabu absoluto / Medo", w1: 63.6, w2: 64.0, total: 63.8 },
+                    { label: "Muito pouco (apenas com líderes específicos)", w1: 27.3, w2: 24.0, total: 25.5 },
+                    { label: "Não precisei de espaço / Não se aplica", w1: 9.1, w2: 4.0, total: 6.4 },
+                    { label: "Sim, ambiente altamente seguro e acolhedor", w1: 0.0, w2: 8.0, total: 4.3 }
+                ]
+            },
+            redes: {
+                question: "Estimativa de liderados com perfis fechados e ocultos:",
+                answers: [
+                    { label: "A grande maioria (mais de 70% do grupo)", w1: 50.0, w2: 52.0, total: 51.1 },
+                    { label: "Cerca de metade do grupo (aproximadamente 50%)", w1: 13.6, w2: 20.0, total: 17.0 },
+                    { label: "Não consigo estimar com segurança", w1: 18.2, w2: 16.0, total: 17.0 },
+                    { label: "Uma pequena minoria (menos de 20%)", w1: 18.2, w2: 8.0, total: 12.8 },
+                    { label: "Nenhum ou quase nenhum deles", w1: 0.0, w2: 4.0, total: 2.1 }
+                ]
+            },
+            termos: {
+                question: "Conhecimento de termos como Finsta, Ecchi, Sexting, etc:",
+                answers: [
+                    { label: "Nunca ouvi falar", w1: 36.4, w2: 58.3, total: 47.8 },
+                    { label: "Não conheço quase nenhum deles", w1: 36.4, w2: 20.8, total: 28.3 },
+                    { label: "Conheço alguns, mas não saberia explicá-los", w1: 27.3, w2: 20.8, total: 23.9 },
+                    { label: "Sim, conheço todos e sei o significado prático", w1: 0.0, w2: 0.0, total: 0.0 }
+                ]
+            },
+            preparo: {
+                question: "Quão preparado você se sente para aconselhar esses jovens?",
+                answers: [
+                    { label: "Parcialmente (Tenho boa vontade, mas falta método)", w1: 68.2, w2: 64.0, total: 66.0 },
+                    { label: "Extremamente inseguro (Prefiro apenas encaminhar)", w1: 9.1, w2: 20.0, total: 14.9 },
+                    { label: "Totalmente preparado (Possuo ferramentas práticas)", w1: 13.6, w2: 8.0, total: 10.6 },
+                    { label: "Despreparado (Tenho receio de julgar ou errar)", w1: 9.1, w2: 8.0, total: 8.5 }
+                ]
+            }
+        };
+
+        let currentTab = 'consolidado';
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            // Atualizar classes dos botões das tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-rose-600', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-400', 'hover:text-slate-200');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200');
+            activeBtn.classList.add('bg-rose-600', 'text-white', 'shadow-md');
+
+            // Atualizar contadores do Top Dashboard
+            const statRespondentes = document.getElementById('stat-respondentes');
+            const statPrecoce = document.getElementById('stat-precoce');
+            const statTabu = document.getElementById('stat-tabu');
+            const statPreparo = document.getElementById('stat-preparo');
+
+            if (tabId === 'consolidado' || tabId === 'comparativo') {
+                statRespondentes.innerText = "47 Líderes";
+                statPrecoce.innerText = "58.7%";
+                statTabu.innerText = "63.8%";
+                statPreparo.innerText = "66.0%";
+            } else if (tabId === 'w1') {
+                statRespondentes.innerText = "22 Líderes";
+                statPrecoce.innerText = "68.2%";
+                statTabu.innerText = "63.6%";
+                statPreparo.innerText = "68.2%";
+            } else if (tabId === 'w2') {
+                statRespondentes.innerText = "25 Líderes";
+                statPrecoce.innerText = "50.0%";
+                statTabu.innerText = "64.0%";
+                statPreparo.innerText = "64.0%";
+            }
+
+            // Renderizar novamente os gráficos com os novos estados de animação
+            renderAllCharts();
+        }
+
+        function renderAllCharts() {
+            renderChart('chart-etaria', dataset.etaria.answers, '#38bdf8'); // Sky
+            renderChart('chart-contato', dataset.contato.answers, '#f43f5e'); // Rose
+            renderChart('chart-tabu', dataset.tabu.answers, '#f59e0b'); // Amber
+            renderChart('chart-redes', dataset.redes.answers, '#6366f1'); // Indigo
+            renderChart('chart-termos', dataset.termos.answers, '#8b5cf6'); // Violet
+            renderChart('chart-preparo', dataset.preparo.answers, '#10b981'); // Emerald
+        }
+
+        function renderChart(elementId, answers, baseColorHex) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = ''; // Limpar anterior
+
+            answers.forEach(ans => {
+                let html = '';
+                if (currentTab === 'comparativo') {
+                    // Visão comparativa lado a lado (Barras empilhadas ou duplas)
+                    html = `
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-slate-300">${ans.label}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-[10px]">
+                                <!-- Workshop 1 (Líderes Mais Velhos) -->
+                                <div class="bg-slate-950 p-1.5 rounded border border-slate-800">
+                                    <div class="flex justify-between mb-1 text-slate-400 font-medium">
+                                        <span>W1 (26+ anos)</span>
+                                        <span class="font-bold text-sky-400">${ans.w1.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-800 h-1.5 rounded overflow-hidden">
+                                        <div class="bg-sky-500 h-full transition-width" style="width: ${ans.w1}%"></div>
+                                    </div>
+                                </div>
+                                <!-- Workshop 2 (Líderes Mais Jovens) -->
+                                <div class="bg-slate-950 p-1.5 rounded border border-slate-800">
+                                    <div class="flex justify-between mb-1 text-slate-400 font-medium">
+                                        <span>W2 (Até 25 anos)</span>
+                                        <span class="font-bold text-emerald-400">${ans.w2.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-800 h-1.5 rounded overflow-hidden">
+                                        <div class="bg-emerald-500 h-full transition-width" style="width: ${ans.w2}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Visão de aba única
+                    let activePercent = ans.total;
+                    let displayLabel = 'Consolidado';
+                    let activeColor = baseColorHex;
+
+                    if (currentTab === 'w1') {
+                        activePercent = ans.w1;
+                        displayLabel = 'Workshop 1';
+                        activeColor = '#38bdf8'; // Sky para W1
+                    } else if (currentTab === 'w2') {
+                        activePercent = ans.w2;
+                        displayLabel = 'Workshop 2';
+                        activeColor = '#10b981'; // Emerald para W2
+                    }
+
+                    html = `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-medium">
+                                <span class="text-slate-300 font-semibold">${ans.label}</span>
+                                <span class="text-slate-400" style="color: ${activeColor}">${activePercent.toFixed(1)}%</span>
+                            </div>
+                            <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800/60 p-[2px]">
+                                <div class="h-full rounded-full transition-width" 
+                                     style="width: ${activePercent}%; background-color: ${activeColor}">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML += html;
+            });
+        }
+
+        // FUNÇÕES DO SIMULADOR DE IMPACTO LOCAL (DINÂMICO)
+        function calculateImpact() {
+            const groupSizeInput = document.getElementById('group-size');
+            const groupSlider = document.getElementById('group-slider');
+            
+            let val = parseInt(groupSizeInput.value) || 0;
+            if (val < 0) val = 0;
+
+            // Sincronizar slider
+            groupSlider.value = val;
+
+            // Fórmulas baseadas nas estatísticas consolidadas da pesquisa
+            const finstaEst = Math.round(val * 0.511); // 51.1% estimam que >70% tem (usando estimativa conservadora do total)
+            const exposicaoEst = Math.round(val * 0.587); // 58.7% tiveram contato < 13 anos
+            const despreparoEst = Math.round(val * (0.66 + 0.149 + 0.085)); // Parcialmente + Inseguro + Despreparado
+
+            document.getElementById('calc-finsta').innerText = finstaEst;
+            document.getElementById('calc-exposicao').innerText = exposicaoEst;
+            
+            // Proporção de líderes necessários na igreja para cuidar desse grupo (ex: 1 líder para cada 10 jovens)
+            const lideresNecessarios = Math.max(1, Math.round(val / 10));
+            const lideresSemMetodo = Math.round(lideresNecessarios * 0.66);
+            document.getElementById('calc-despreparo').innerText = `${lideresSemMetodo} de ${lideresNecessarios}`;
+        }
+
+        function syncSlider() {
+            const groupSizeInput = document.getElementById('group-size');
+            const groupSlider = document.getElementById('group-slider');
+            groupSizeInput.value = groupSlider.value;
+            calculateImpact();
+        }
+
+        // STARTUP
+        window.onload = function() {
+            renderAllCharts();
+            calculateImpact();
+        }
+    </script>
+</body>
+</html>
