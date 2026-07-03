@@ -3,528 +3,587 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infográfico Diagnóstico - Uma Vida Dupla (Lidere 2026)</title>
-    <!-- Tailwind CSS para estilização moderna e responsiva -->
+    <title>Guia de Hora Silenciosa - APV Inverno 2026</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fontes do Google (Inter para legibilidade limpa e técnica) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Tons de ardósia (slate) para fundo e texto, trazendo calma e foco, com azul-marinho (blue-900) para estrutura, e âmbar (amber-500) para destaques e calor espiritual. -->
+    <!-- Application Structure Plan: A estrutura em formato de 'Dashboard de Jornada' foi refinada para priorizar o foco rápido. O gráfico de tempo da "Hora Silenciosa" foi colocado em um painel expansível/retrátil, garantindo que o cronograma de dias seja a primeira atração visual para a equipe. Implementamos persistência de estado (localStorage) para que o usuário permaneça em seu fluxo diário de leitura, e controles de rodapé nas lições facilitam uma leitura sequencial tátil sem quebras de navegação. -->
+    <!-- Visualization & Content Choices: Informação do Relatório -> Objetivo -> Visualização -> Interação -> Justificativa -> Biblioteca/Método:
+    1. Tempo da Hora Silenciosa -> Proporção e Método -> Gráfico de Rosca (Doughnut) -> Exibição sob demanda via gatilho expansível -> Evita poluição visual no carregamento inicial -> Chart.js.
+    2. Progresso de Leitura -> Persistência de Estado -> Destaque visual no card do dia atual -> Leitura de estado via localStorage -> Garante usabilidade rápida no acampamento -> JS Nativo.
+    3. Navegação Interna -> Facilitar leitura contínua -> Botões flutuantes direcionais (←, ↑, →) -> Cliques nativos rápidos -> Melhora a experiência móvel -> DOM/Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px;
+            max-height: 300px;
         }
-        .transition-width {
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+<body class="antialiased pb-24">
 
-    <!-- HEADER DO INFOGRÁFICO -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-4 sm:px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center shadow-lg shadow-rose-900/30">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold tracking-wider uppercase text-rose-500 bg-rose-950/50 px-2 py-0.5 rounded-full border border-rose-800/30">Lidere 2026</span>
-                        <span class="text-xs text-slate-400 font-medium">Palavra da Vida | Igreja Local</span>
-                    </div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-100 tracking-tight">Uma Vida Dupla <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-amber-500 font-medium">// O Infográfico</span></h1>
-                </div>
-            </div>
-            
-            <!-- CONTROLE DE AUDIÊNCIA (TABS) -->
-            <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex w-full md:w-auto overflow-x-auto">
-                <button onclick="switchTab('consolidado')" id="btn-consolidado" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap bg-rose-600 text-white shadow-md">
-                    Geral (Consolidado)
-                </button>
-                <button onclick="switchTab('w1')" id="btn-w1" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
-                    Workshop 1
-                </button>
-                <button onclick="switchTab('w2')" id="btn-w2" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
-                    Workshop 2
-                </button>
-                <button onclick="switchTab('comparativo')" id="btn-comparativo" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
-                    Lado a Lado (Comparativo)
-                </button>
-            </div>
-        </div>
+    <header class="bg-slate-900 text-white p-6 shadow-md text-center">
+        <h1 class="text-3xl font-bold tracking-tight">Hora Silenciosa APV</h1>
+        <p class="text-slate-300 mt-2 text-sm uppercase tracking-widest">Temporada de Inverno 2026 — Servindo de Coração</p>
     </header>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 sm:px-6 w-full space-y-8">
-        
-        <!-- SEÇÃO DO METRO DA PESQUISA / OVERVIEW -->
-        <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total de Respondentes</span>
-                    <h2 class="text-3xl font-extrabold text-white mt-1" id="stat-respondentes">47 Líderes</h2>
+    <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- CONTEÚDO EXPANSÍVEL: Dinâmica dos 30 minutos agora sob demanda -->
+        <details class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden group transition-all duration-300">
+            <summary class="p-5 font-bold text-lg md:text-xl text-slate-800 cursor-pointer flex justify-between items-center select-none list-none">
+                <div class="flex items-center gap-3">
+                    <span>📊</span>
+                    <span>A Dinâmica de Tempo da Hora Silenciosa (30 min)</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-2">Mapeamento anônimo e voluntário realizado em tempo real nas duas sessões da conferência.</p>
+                <span class="text-blue-600 text-sm font-semibold group-open:hidden">Clique para ver o gráfico ➔</span>
+                <span class="text-slate-500 text-sm font-semibold hidden group-open:inline">Recolher ✖</span>
+            </summary>
+            
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col md:flex-row items-center gap-8">
+                <div class="w-full md:w-1/2">
+                    <div class="chart-container">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2 space-y-4">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🧭</span>
+                        <div>
+                            <h3 class="font-bold text-slate-800">1. Preparação e Leitura (5 min)</h3>
+                            <p class="text-sm text-slate-600">Prepare sua mente em oração silenciosa. Leia e releia o trecho bíblico indicado com foco.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">📖</span>
+                        <div>
+                            <h3 class="font-bold text-slate-800">2. Meditação Guiada - MEB (15 min)</h3>
+                            <p class="text-sm text-slate-600">Medite nas questões de Observação e Interpretação. Aplique as lições diretamente ao seu serviço de hoje.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">🙏</span>
+                        <div>
+                            <h3 class="font-bold text-slate-800">3. Oração e Memorização (10 min)</h3>
+                            <p class="text-sm text-slate-600">Gaste tempo em diálogo com Deus. Memorize a frase-chave do dia e guarde-a na mente.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">Exposição Precoce (&lt;13 anos)</span>
-                    <h2 class="text-3xl font-extrabold text-rose-500 mt-1" id="stat-precoce">58.7%</h2>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">Mais da metade dos líderes presentes tiveram contato com pornografia na infância ou pré-adolescência.</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-500">Silêncio Histórico (Tabu)</span>
-                    <h2 class="text-3xl font-extrabold text-amber-500 mt-1" id="stat-tabu">63.8%</h2>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">Cresceram sabendo que confessar fraquezas sexuais na igreja resultaria em punição ou vergonha pública.</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800/60 p-5 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Necessitam de Ferramentas</span>
-                    <h2 class="text-3xl font-extrabold text-emerald-400 mt-1" id="stat-preparo">66.0%</h2>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">Líderes que declararam ter amor e boa vontade, mas que não possuem metodologia prática de aconselhamento.</p>
+        </details>
+
+        <!-- SEÇÃO PRINCIPAL: Cronograma de Dias (Carregada diretamente) -->
+        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Jornada de Inverno</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed text-sm md:text-base">
+                Selecione abaixo o dia da sua jornada para ter acesso às orientações, leituras e perguntas do Método de Estudo Bíblico Indutivo (MEB) da sua Hora Silenciosa.
+            </p>
+
+            <div id="calendar-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injetado dinamicamente via JS -->
             </div>
         </section>
 
-        <!-- SEÇÃO DO CALCULE SEU IMPACTO (FERRAMENTA INTERATIVA DO JACOB) -->
-        <section class="bg-gradient-to-br from-slate-900 to-slate-950 border-2 border-rose-900/30 p-6 rounded-2xl shadow-xl">
-            <div class="max-w-4xl">
-                <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <span class="flex h-3 w-3 relative">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                    </span>
-                    Ferramenta de Diagnóstico Local: Aplique estes dados à sua Igreja
-                </h3>
-                <p class="text-sm text-slate-400 mt-1">Estime o cenário real invisível no seu grupo de adolescentes baseado nos padrões descobertos no Lidere 2026.</p>
+        <!-- LEITOR INDUTIVO (Oculto até um dia ser selecionado) -->
+        <section id="reader-section" class="hidden bg-white rounded-xl shadow-lg border-t-4 border-blue-600 p-6 md:p-8 mt-8 scroll-mt-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 pb-4 mb-6">
+                <div>
+                    <span id="read-period" class="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider mb-2 inline-block"></span>
+                    <h2 id="read-title" class="text-3xl font-extrabold text-slate-900 flex items-center gap-2"></h2>
+                    <p id="read-date" class="text-slate-500 text-sm font-medium mt-1"></p>
+                </div>
+                <div class="mt-4 md:mt-0 text-left md:text-right">
+                    <div id="read-verse" class="text-xl font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="col-span-1 md:col-span-2 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r">
+                        <p id="read-phrase" class="text-lg italic font-medium text-amber-900"></p>
+                    </div>
+                    
+                    <div class="flex gap-4 text-sm">
+                        <div class="bg-slate-50 p-3 rounded flex-1 border border-slate-100">
+                            <span class="block text-slate-400 text-xs uppercase font-bold mb-1">Etapa</span>
+                            <span id="read-stage" class="font-semibold text-slate-700"></span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded flex-1 border border-slate-100">
+                            <span class="block text-slate-400 text-xs uppercase font-bold mb-1">Foco de Hoje</span>
+                            <span id="read-focus" class="font-semibold text-slate-700"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2"><span>📚</span> Estudo Bíblico Indutivo (MEB)</h3>
+            
+            <div class="space-y-6 mb-10">
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow transition">
+                    <h4 class="text-blue-800 font-bold mb-2 flex items-center gap-2 text-lg"><span>🔍</span> 1. Observação</h4>
+                    <p id="read-obs" class="text-slate-700 leading-relaxed"></p>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow transition">
+                    <h4 class="text-blue-800 font-bold mb-2 flex items-center gap-2 text-lg"><span>💡</span> 2. Interpretação</h4>
+                    <p id="read-int" class="text-slate-700 leading-relaxed"></p>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-lg border border-blue-200 shadow-inner">
+                    <h4 class="text-blue-900 font-bold mb-3 flex items-center gap-2 text-xl"><span>🏃</span> 3. Aplicação Prática</h4>
+                    <p id="read-app" class="text-slate-800 font-medium leading-relaxed"></p>
+                </div>
+            </div>
+            
+            <!-- NAVEGAÇÃO ENTRE DIAS -->
+            <div class="border-t border-slate-200 pt-6 flex justify-between items-center gap-2">
+                <button id="nav-prev-btn" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition">
+                    <span>←</span> <span class="hidden sm:inline">Anterior</span>
+                </button>
                 
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    <div class="md:col-span-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                        <label for="group-size" class="block text-xs font-bold uppercase tracking-wider text-slate-300">Quantidade de Liderados (Adolescentes)</label>
-                        <div class="flex items-center gap-3 mt-2">
-                            <input type="number" id="group-size" value="40" min="5" max="1000" oninput="calculateImpact()" class="bg-slate-950 text-white font-extrabold text-2xl w-24 p-2 rounded-lg border border-slate-800 focus:outline-none focus:border-rose-500 text-center">
-                            <span class="text-slate-400 font-medium">adolescentes</span>
-                        </div>
-                        <input type="range" id="group-slider" min="5" max="250" value="40" oninput="syncSlider()" class="w-full mt-4 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500">
-                    </div>
-
-                    <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/40 text-center">
-                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Perfis Secretos ("Finsta")</span>
-                            <p class="text-2xl font-black text-rose-500 mt-1" id="calc-finsta">20</p>
-                            <span class="text-[10px] text-slate-500">provavelmente usam contas ocultas dos pais</span>
-                        </div>
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/40 text-center">
-                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Exposição a Pornografia</span>
-                            <p class="text-2xl font-black text-amber-500 mt-1" id="calc-exposicao">23</p>
-                            <span class="text-[10px] text-slate-500">já terão tido acesso antes de fazer 13 anos</span>
-                        </div>
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/40 text-center">
-                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Líderes Despreparados</span>
-                            <p class="text-2xl font-black text-emerald-400 mt-1" id="calc-despreparo">2</p>
-                            <span class="text-[10px] text-slate-500">em cada 3 líderes não sabem como aconselhá-los</span>
-                        </div>
-                    </div>
-                </div>
+                <button id="nav-up-btn" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition">
+                    <span>↑</span> <span class="hidden sm:inline">Topo / Menu</span>
+                </button>
+                
+                <button id="nav-next-btn" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition">
+                    <span class="hidden sm:inline">Próximo</span> <span>→</span>
+                </button>
             </div>
         </section>
 
-        <!-- GRID PRINCIPAL DE RESULTADOS -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="graphs-grid">
-            
-            <!-- CARD 1: FAIXA ETÁRIA -->
-            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">1. Quem é o Líder Respondente?</h4>
-                        <span class="text-xs font-semibold text-slate-400 bg-slate-800 px-2 py-1 rounded">Faixa Etária</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1 mb-6">Mapeamento de idade para entender o contraste de percepção cultural e digital.</p>
-                    
-                    <div class="space-y-4" id="chart-etaria">
-                        <!-- Gerado via Javascript dinamicamente -->
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
-                    <strong class="text-rose-400 font-semibold shrink-0">Insight:</strong>
-                    <span>O Workshop 1 foi composto por líderes experientes (26 a 40 anos), enquanto o Workshop 2 mobilizou os jovens líderes voluntários que estão na ponta do ministério (&lt;25 anos).</span>
-                </div>
-            </div>
-
-            <!-- CARD 2: IDADE DE PRIMEIRO CONTATO -->
-            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">2. O Início: Primeiro Contato com Pornografia</h4>
-                        <span class="text-xs font-semibold text-rose-400 bg-rose-950/30 px-2 py-1 rounded border border-rose-900/30">Precocidade</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1 mb-6">Em qual momento da vida ocorreu o primeiro contato com conteúdo erótico na internet ou meios analógicos?</p>
-                    
-                    <div class="space-y-4" id="chart-contato">
-                        <!-- Gerado via Javascript dinamicamente -->
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
-                    <strong class="text-rose-400 font-semibold shrink-0">Bíblico/Prático:</strong>
-                    <span>A exposição ocorre na infância e início da adolescência. O discipulado de pureza não pode esperar até o jovem ter 17-18 anos; a prevenção precisa começar aos 10 anos.</span>
-                </div>
-            </div>
-
-            <!-- CARD 3: O TABU HISTÓRICO -->
-            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">3. O Histórico: Espaço Seguro para Confissão</h4>
-                        <span class="text-xs font-semibold text-amber-400 bg-amber-950/30 px-2 py-1 rounded border border-amber-900/30">Ambiente de Graça</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1 mb-6">"Na sua época de adolescente, você tinha um espaço seguro na igreja para confessar lutas na área de sexualidade?"</p>
-                    
-                    <div class="space-y-4" id="chart-tabu">
-                        <!-- Gerado via Javascript dinamicamente -->
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
-                    <strong class="text-amber-400 font-semibold shrink-0">Diagnóstico:</strong>
-                    <span>Quase dois terços dos líderes herdaram a herança do tabu absoluto. Isso explica por que, intuitivamente, a igreja de hoje tende a silenciar em vez de pastorear preventivamente.</span>
-                </div>
-            </div>
-
-            <!-- CARD 4: REDES OCULTAS -->
-            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">4. A Realidade Invisível: Perfis Escondidos ("Finsta")</h4>
-                        <span class="text-xs font-semibold text-indigo-400 bg-indigo-950/30 px-2 py-1 rounded border border-indigo-900/30">Comportamento Digital</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1 mb-6">"Quantos dos seus liderados você estima que possuem perfis fechados e ocultos dos pais e líderes?"</p>
-                    
-                    <div class="space-y-4" id="chart-redes">
-                        <!-- Gerado via Javascript dinamicamente -->
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
-                    <strong class="text-indigo-400 font-semibold shrink-0">Alerta:</strong>
-                    <span>Mais de 50% dos líderes sabem que a grande maioria de seus jovens operam contas ocultas (Finstas). O discipulado não pode ser feito apenas com base no que eles postam no perfil oficial.</span>
-                </div>
-            </div>
-
-            <!-- CARD 5: APAGÃO CONCEITUAL -->
-            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">5. O Abismo Técnico: Termos Teen Pop/Digital</h4>
-                        <span class="text-xs font-semibold text-violet-400 bg-violet-950/30 px-2 py-1 rounded border border-violet-900/30">Conexão Cultural</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1 mb-6">"Você conhece o significado prático de termos como Finsta, Ecchi, Fanservice, Sexting e Fanfiction?"</p>
-                    
-                    <div class="space-y-4" id="chart-termos">
-                        <!-- Gerado via Javascript dinamicamente -->
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
-                    <strong class="text-violet-400 font-semibold shrink-0">O Abismo:</strong>
-                    <span>Cerca de 76% dos líderes admitem que não dominam ou nunca ouviram falar destes termos digitais cotidianos. Há uma barreira de comunicação crítica a ser vencida.</span>
-                </div>
-            </div>
-
-            <!-- CARD 6: PREPARO PASTORAL -->
-            <div class="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-base font-bold text-slate-200 uppercase tracking-tight">6. Preparo Prático para o Aconselhamento</h4>
-                        <span class="text-xs font-semibold text-emerald-400 bg-emerald-950/30 px-2 py-1 rounded border border-emerald-900/30">Capacitação</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1 mb-6">"Quão preparado você se sente para aconselhar um liderado que confessa vício em pornografia ou envolvimento com sexting?"</p>
-                    
-                    <div class="space-y-4" id="chart-preparo">
-                        <!-- Gerado via Javascript dinamicamente -->
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex gap-2">
-                    <strong class="text-emerald-400 font-semibold shrink-0">Solução:</strong>
-                    <span>A imensa maioria (66%) quer ajudar e ama o liderado, mas carece de um método estruturado (ex: o plano de batalha e as ferramentas de blindagem do workshop).</span>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- SESSÃO DE RECURSOS E AÇÕES RECOMENDADAS PELO PALAVRA DA VIDA -->
-        <section class="bg-slate-900 border border-slate-800/80 p-8 rounded-2xl">
-            <h3 class="text-xl font-bold text-white mb-2">Plano de Batalha Pastoral e Tecnológico</h3>
-            <p class="text-sm text-slate-400 mb-6">Como converter estes diagnósticos desesperadores em restauração prática dentro da Igreja Local:</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                    <div>
-                        <div class="text-rose-500 font-bold text-lg flex items-center gap-2 mb-3">
-                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                            1. Quebre o Silêncio
-                        </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Crie espaços pastorais estruturados com base no acolhimento de Jesus. Remova a punição sumária do vocabulário ministerial para lutas confessadas de forma voluntária. No discipulado de juventude, quem confessa primeiro merece graça, orientação e proteção contra o isolamento espiritual.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                    <div>
-                        <div class="text-amber-500 font-bold text-lg flex items-center gap-2 mb-3">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                            2. Ensine a Blindagem
-                        </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Instrua os pais a ativarem barreiras físicas em roteadores utilizando serviços de DNS Familiar gratuitos (como AdGuard ou Cloudflare Families). Implemente parcerias de prestação de contas ativa no discipulado utilizando ferramentas de inteligência artificial confidencial como o <strong>Covenant Eyes</strong>.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                    <div>
-                        <div class="text-emerald-500 font-bold text-lg flex items-center gap-2 mb-3">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            3. Use Metodologias
-                        </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Aplique sistematicamente os <strong>4 Passos do Arrependimento Bíblico Genuíno</strong>: Confissão Nominal (nomear o erro bíblico), Tristeza segundo Deus (arrependimento e não mero medo de ser descoberto), Abandono Prático (corte de mídias e conexões perigosas) e Prestação de Contas ativa.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <footer class="border-t border-slate-800 bg-slate-950 text-slate-500 text-center py-6 text-xs mt-12">
-        <div class="max-w-7xl mx-auto px-4">
-            <p>Infográfico interativo de dados estruturados e consolidados para o palestrante Jacob. Palavra da Vida - Ministério com a Igreja Local © 2026</p>
-            <p class="mt-1">Todos os dados exibidos foram capturados de forma totalmente anônima via DirectPoll durante o Lidere 2026.</p>
-        </div>
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 text-sm mt-12">
+        <p>Temporada de Inverno 2026 — APV</p>
+        <p>Desenvolvido para a Hora Silenciosa da Equipe</p>
     </footer>
 
-    <!-- LOGIC SYSTEM (DATA & SWITCHING) -->
     <script>
-        // Dados Estruturados da Pesquisa Real
-        const dataset = {
-            etaria: {
-                question: "Qual é a sua faixa etária atual?",
-                answers: [
-                    { label: "Até 25 anos", w1: 36.4, w2: 56.0, total: 46.8 },
-                    { label: "Entre 26 e 40 anos", w1: 40.9, w2: 20.0, total: 29.8 },
-                    { label: "Entre 41 e 55 anos", w1: 18.2, w2: 24.0, total: 21.3 },
-                    { label: "Mais de 55 anos", w1: 4.5, w2: 0.0, total: 2.1 }
-                ]
-            },
-            contato: {
-                question: "Com que idade teve seu primeiro contato com pornografia?",
-                answers: [
-                    { label: "Menos de 10 anos", w1: 18.2, w2: 20.8, total: 19.6 },
-                    { label: "Entre 11 e 13 anos", w1: 50.0, w2: 29.2, total: 39.1 },
-                    { label: "Entre 14 e 17 anos", w1: 13.6, w2: 33.3, total: 23.9 },
-                    { label: "18 anos ou mais", w1: 9.1, w2: 16.7, total: 13.0 },
-                    { label: "Nunca tive contato", w1: 9.1, w2: 0.0, total: 4.3 }
-                ]
-            },
-            tabu: {
-                question: "Tinha espaço seguro na igreja para confessar na adolescência?",
-                answers: [
-                    { label: "Não, sexualidade era tabu absoluto / Medo", w1: 63.6, w2: 64.0, total: 63.8 },
-                    { label: "Muito pouco (apenas com líderes específicos)", w1: 27.3, w2: 24.0, total: 25.5 },
-                    { label: "Não precisei de espaço / Não se aplica", w1: 9.1, w2: 4.0, total: 6.4 },
-                    { label: "Sim, ambiente altamente seguro e acolhedor", w1: 0.0, w2: 8.0, total: 4.3 }
-                ]
-            },
-            redes: {
-                question: "Estimativa de liderados com perfis fechados e ocultos:",
-                answers: [
-                    { label: "A grande maioria (mais de 70% do grupo)", w1: 50.0, w2: 52.0, total: 51.1 },
-                    { label: "Cerca de metade do grupo (aproximadamente 50%)", w1: 13.6, w2: 20.0, total: 17.0 },
-                    { label: "Não consigo estimar com segurança", w1: 18.2, w2: 16.0, total: 17.0 },
-                    { label: "Uma pequena minoria (menos de 20%)", w1: 18.2, w2: 8.0, total: 12.8 },
-                    { label: "Nenhum ou quase nenhum deles", w1: 0.0, w2: 4.0, total: 2.1 }
-                ]
-            },
-            termos: {
-                question: "Conhecimento de termos como Finsta, Ecchi, Sexting, etc:",
-                answers: [
-                    { label: "Nunca ouvi falar", w1: 36.4, w2: 58.3, total: 47.8 },
-                    { label: "Não conheço quase nenhum deles", w1: 36.4, w2: 20.8, total: 28.3 },
-                    { label: "Conheço alguns, mas não saberia explicá-los", w1: 27.3, w2: 20.8, total: 23.9 },
-                    { label: "Sim, conheço todos e sei o significado prático", w1: 0.0, w2: 0.0, total: 0.0 }
-                ]
-            },
-            preparo: {
-                question: "Quão preparado você se sente para aconselhar esses jovens?",
-                answers: [
-                    { label: "Parcialmente (Tenho boa vontade, mas falta método)", w1: 68.2, w2: 64.0, total: 66.0 },
-                    { label: "Extremamente inseguro (Prefiro apenas encaminhar)", w1: 9.1, w2: 20.0, total: 14.9 },
-                    { label: "Totalmente preparado (Possuo ferramentas práticas)", w1: 13.6, w2: 8.0, total: 10.6 },
-                    { label: "Despreparado (Tenho receio de julgar ou errar)", w1: 9.1, w2: 8.0, total: 8.5 }
-                ]
-            }
-        };
-
-        let currentTab = 'consolidado';
-
-        function switchTab(tabId) {
-            currentTab = tabId;
-            
-            // Atualizar classes dos botões das tabs
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-rose-600', 'text-white', 'shadow-md');
-                btn.classList.add('text-slate-400', 'hover:text-slate-200');
-            });
-            
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200');
-            activeBtn.classList.add('bg-rose-600', 'text-white', 'shadow-md');
-
-            // Atualizar contadores do Top Dashboard
-            const statRespondentes = document.getElementById('stat-respondentes');
-            const statPrecoce = document.getElementById('stat-precoce');
-            const statTabu = document.getElementById('stat-tabu');
-            const statPreparo = document.getElementById('stat-preparo');
-
-            if (tabId === 'consolidado' || tabId === 'comparativo') {
-                statRespondentes.innerText = "47 Líderes";
-                statPrecoce.innerText = "58.7%";
-                statTabu.innerText = "63.8%";
-                statPreparo.innerText = "66.0%";
-            } else if (tabId === 'w1') {
-                statRespondentes.innerText = "22 Líderes";
-                statPrecoce.innerText = "68.2%";
-                statTabu.innerText = "63.6%";
-                statPreparo.innerText = "68.2%";
-            } else if (tabId === 'w2') {
-                statRespondentes.innerText = "25 Líderes";
-                statPrecoce.innerText = "50.0%";
-                statTabu.innerText = "64.0%";
-                statPreparo.innerText = "64.0%";
-            }
-
-            // Renderizar novamente os gráficos com os novos estados de animação
-            renderAllCharts();
-        }
-
-        function renderAllCharts() {
-            renderChart('chart-etaria', dataset.etaria.answers, '#38bdf8'); // Sky
-            renderChart('chart-contato', dataset.contato.answers, '#f43f5e'); // Rose
-            renderChart('chart-tabu', dataset.tabu.answers, '#f59e0b'); // Amber
-            renderChart('chart-redes', dataset.redes.answers, '#6366f1'); // Indigo
-            renderChart('chart-termos', dataset.termos.answers, '#8b5cf6'); // Violet
-            renderChart('chart-preparo', dataset.preparo.answers, '#10b981'); // Emerald
-        }
-
-        function renderChart(elementId, answers, baseColorHex) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = ''; // Limpar anterior
-
-            answers.forEach(ans => {
-                let html = '';
-                if (currentTab === 'comparativo') {
-                    // Visão comparativa lado a lado (Barras empilhadas ou duplas)
-                    html = `
-                        <div class="space-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-semibold text-slate-300">${ans.label}</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 text-[10px]">
-                                <!-- Workshop 1 (Líderes Mais Velhos) -->
-                                <div class="bg-slate-950 p-1.5 rounded border border-slate-800">
-                                    <div class="flex justify-between mb-1 text-slate-400 font-medium">
-                                        <span>W1 (26+ anos)</span>
-                                        <span class="font-bold text-sky-400">${ans.w1.toFixed(1)}%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-800 h-1.5 rounded overflow-hidden">
-                                        <div class="bg-sky-500 h-full transition-width" style="width: ${ans.w1}%"></div>
-                                    </div>
-                                </div>
-                                <!-- Workshop 2 (Líderes Mais Jovens) -->
-                                <div class="bg-slate-950 p-1.5 rounded border border-slate-800">
-                                    <div class="flex justify-between mb-1 text-slate-400 font-medium">
-                                        <span>W2 (Até 25 anos)</span>
-                                        <span class="font-bold text-emerald-400">${ans.w2.toFixed(1)}%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-800 h-1.5 rounded overflow-hidden">
-                                        <div class="bg-emerald-500 h-full transition-width" style="width: ${ans.w2}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    // Visão de aba única
-                    let activePercent = ans.total;
-                    let displayLabel = 'Consolidado';
-                    let activeColor = baseColorHex;
-
-                    if (currentTab === 'w1') {
-                        activePercent = ans.w1;
-                        displayLabel = 'Workshop 1';
-                        activeColor = '#38bdf8'; // Sky para W1
-                    } else if (currentTab === 'w2') {
-                        activePercent = ans.w2;
-                        displayLabel = 'Workshop 2';
-                        activeColor = '#10b981'; // Emerald para W2
-                    }
-
-                    html = `
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-medium">
-                                <span class="text-slate-300 font-semibold">${ans.label}</span>
-                                <span class="text-slate-400" style="color: ${activeColor}">${activePercent.toFixed(1)}%</span>
-                            </div>
-                            <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800/60 p-[2px]">
-                                <div class="h-full rounded-full transition-width" 
-                                     style="width: ${activePercent}%; background-color: ${activeColor}">
-                                </div>
-                            </div>
-                        </div>
-                    `;
+        const devotionals = [
+            {
+                day: 1, date: "02/07", title: "PROPÓSITO", icon: "🎯", verse: "Colossenses 3.23-24",
+                phrase: "Servimos com o coração voltado para Deus, não para aplausos.",
+                stage: "Motivação e chamado", focus: "Primeiro dia oficial da equipe.",
+                period: "Preparo da Equipe", periodDates: "02/07 a 04/07", periodIcon: "🛠️", periodColor: "bg-stone-200",
+                meb: {
+                    obs: "Paulo apresenta dois focos possíveis para o nosso trabalho diário: fazer 'para homens' ou fazer 'como para o Senhor'. De acordo com o versículo 23, qual deve ser a intensidade e a disposição de espírito em tudo o que fazemos?",
+                    int: "No versículo 24, qual é a garantia teológica que recebemos ao compreender que 'servimos a Cristo, o Senhor'? Como essa verdade redime e dá valor eterno a tarefas simples ou invisíveis que você terá que fazer nos treinamentos e organização dos setores?",
+                    app: "De forma prática, para quem você está trabalhando nesta temporada de inverno? Se nenhum líder notar o seu esforço hoje, o seu coração permanecerá em paz? Como isso afeta sua postura nas primeiras tarefas práticas de preparação hoje?"
                 }
-                container.innerHTML += html;
+            },
+            {
+                day: 2, date: "03/07", title: "ENTREGA", icon: "👐", verse: "Romanos 12.1",
+                phrase: "Servir começa quando colocamos tudo no altar.",
+                stage: "Motivação e chamado", focus: "Consagração pessoal e física.",
+                period: "Preparo da Equipe", periodDates: "02/07 a 04/07", periodIcon: "🛠️", periodColor: "bg-stone-200",
+                meb: {
+                    obs: "Quais são os três adjetivos que Paulo usa para qualificar o tipo de sacrifício que devemos apresentar a Deus? Qual é a motivação inicial que ele usa para nos rogar a fazer isso?",
+                    int: "O sacrifício no Antigo Testamento envolvia a morte de um animal no altar. No Novo Testamento, somos chamados a ser um 'sacrifício vivo'. Como o sacrifício de Cristo na cruz nos capacita e nos motiva a entregar nossas vidas e energias de forma voluntária ao serviço do Seu reino?",
+                    app: "O acampamento exige muito do nosso corpo físico (sono reduzido, cansaço nas pernas, frio de Atibaia). Você está pronto para entregar o seu corpo físico como um sacrifício agradável a Deus hoje? Existe alguma área de conforto ou direito pessoal que você ainda não colocou no altar para esta temporada?"
+                }
+            },
+            {
+                day: 3, date: "04/07", title: "DECISÃO", icon: "🏁", verse: "Josué 24.15b",
+                phrase: "Servir ao Senhor é uma escolha renovada todos os dias.",
+                stage: "Motivação e chamado", focus: "Véspera da chegada dos primeiros acampantes.",
+                period: "Preparo da Equipe", periodDates: "02/07 a 04/07", periodIcon: "🛠️", periodColor: "bg-stone-200",
+                meb: {
+                    obs: "Quais opções de escolha Josué coloca diante do povo antes de declarar sua própria decisão? Quem ele inclui em sua famosa declaração de compromisso?",
+                    int: "O povo estava cercado de deuses da Mesopotâmia e deuses dos amorreus. No contexto do acampamento, quais 'deuses modernos' (como necessidade de autoafirmação, preguiça, vaidade ou controle sobre as circunstâncias) tentarão competir com a sua decisão de servir unicamente ao Senhor?",
+                    app: "Amanhã os primeiros Tweens chegam. A escolha de servir a Deus com integridade e alegria não é automática; ela exige decisão. Escreva ou ore fazendo um pacto pessoal com o Senhor de que, não importa as dificuldades da escala ou o cansaço, você escolherá servir a Ele nesta temporada."
+                }
+            },
+            {
+                day: 4, date: "05/07", title: "SERVIÇO", icon: "🧼", verse: "Marcos 10.45",
+                phrase: "Seguimos Jesus quando escolhemos servir.",
+                stage: "Dependência de Deus", focus: "Chegada dos acampantes (Tweens 1).",
+                period: "Tweens 1", periodDates: "05/07 a 08/07", periodIcon: "🧸", periodColor: "bg-cyan-100",
+                meb: {
+                    obs: "Quais são as duas ações que Jesus afirma ser o propósito de Sua vinda ao mundo? O que Ele nega explicitamente como sendo a Sua motivação?",
+                    int: "A palavra 'resgate' indica o preço pago para libertar escravos. Sendo Jesus o Rei Soberano, como o Seu ato supremo de humilhação e serviço na cruz deve destruir todo o nosso orgulho e pretensão de querermos ser paparicados ou servidos pelos outros?",
+                    app: "Com a chegada dos primeiros acampantes hoje, é fácil focar na nossa posição ou autoridade. Como você pode imitar a Cristo hoje nos pequenos detalhes? Talvez ajudando a carregar uma mala pesada, limpando uma sujeira que não é sua ou acolhendo uma criança tímida com um sorriso sincero."
+                }
+            },
+            {
+                day: 5, date: "06/07", title: "CONFIANÇA", icon: "🔓", verse: "Provérbios 16.3",
+                phrase: "Entregar as obras ao Senhor traz descanso ao coração.",
+                stage: "Dependência de Deus", focus: "Primeiras 24 horas de programação ativa com as crianças.",
+                period: "Tweens 1", periodDates: "05/07 a 08/07", periodIcon: "🧸", periodColor: "bg-cyan-100",
+                meb: {
+                    obs: "Qual é a ordem imperativa dada no início do provérbio? Qual é a promessa feita para os nossos pensamentos/planos como consequência direta?",
+                    int: "No original, a palavra para 'confiar' ou 'entregar' significa literalmente 'rolar um fardo de cima de si para cima de outro'. O que significa, em termos práticos e teológicos, rolar o peso dos resultados e do andamento da programação diária do acampamento para os ombros de Deus?",
+                    app: "Lidar com crianças pequenas pode gerar ansiedade sobre a segurança, a atenção deles nas mensagens ou o cumprimento dos horários. O que especificamente tem tirado a paz dos seus pensamentos hoje? Entregue esse fardo ao Senhor em oração agora e descanse na fidelidade dEle."
+                }
+            },
+            {
+                day: 6, date: "07/07", title: "FUNDAMENTO", icon: "🧱", verse: "Salmo 127.1",
+                phrase: "Só o que Deus constrói permanece.",
+                stage: "Dependência de Deus", focus: "Meio de semana. Perigo de confiar nas próprias habilidades.",
+                period: "Tweens 1", periodDates: "05/07 a 08/07", periodIcon: "🧸", periodColor: "bg-cyan-100",
+                meb: {
+                    obs: "Quais são as duas figuras profissionais usadas pelo salmista no versículo 1? O que acontece com o trabalho de cada um deles se o Senhor não for o agente principal?",
+                    int: "O salmista qualifica o esforço autossuficiente como 'vão' (inútil). Como o orgulho ministerial nos tenta a achar que um bom jogo, uma boa palestra ou um bom teatro acontecem por causa do nosso talento natural ou preparo técnico, ignorando a ação do Espírito Santo?",
+                    app: "Se dependêssemos apenas do seu carisma pessoal ou da sua energia para transformar o coração de um Tween hoje, nada aconteceria. Identifique em qual área do seu serviço você tem agido no 'piloto automático', sem orar de verdade, e clame por total dependência do Senhor para a programação de hoje."
+                }
+            },
+            {
+                day: 7, date: "08/07", title: "RENOVO", icon: "🔄", verse: "Isaías 40.31",
+                phrase: "Deus renova forças que já se esgotaram.",
+                stage: "Dependência de Deus", focus: "Último dia de Tweens 1. Cansaço físico acumulado por correr com as crianças.",
+                period: "Tweens 1", periodDates: "05/07 a 08/07", periodIcon: "🧸", periodColor: "bg-cyan-100",
+                meb: {
+                    obs: "Qual é a atitude necessária descrita no texto para recebermos a renovação de forças? Quais são as três descrições de movimento que caracterizam aqueles que são renovados?",
+                    int: "No verso 30, o profeta lembra que até os jovens mais vigorosos se cansam e caem. Por que a nossa força humana falha tão rápido no ministério e por que a força que vem de 'esperar no Senhor' é a única que se renova continuamente?",
+                    app: "Depois de dias correndo, gritando e cuidando de dezenas de crianças, o cansaço bateu forte. Onde você tem tentado recarregar sua bateria espiritual e física: no isolamento do celular ou buscando a presença dAquele que dá força ao cansado? Peça ao Senhor um renovo sobrenatural para fechar este primeiro período com chave de ouro."
+                }
+            },
+            {
+                day: 8, date: "09/07", title: "DESCANSO", icon: "🌙", verse: "Mateus 11.28",
+                phrase: "O descanso verdadeiro começa em Cristo.",
+                stage: "Dependência de Deus", focus: "Transição e recepção do segundo grupo de Tweens.",
+                period: "Tweens 2", periodDates: "09/07 a 12/07", periodIcon: "🧸", periodColor: "bg-teal-100",
+                meb: {
+                    obs: "Quais são as duas condições das pessoas que Jesus convida a irem até Ele? O que Ele promete dar em troca?",
+                    int: "No contexto judaico, o fardo pesado referia-se ao jugo da lei imposto pelos fariseus. No contexto do acampamento, de que maneira a busca por perfeccionismo ministerial, a necessidade de provar nosso valor para os outros ou o ativismo religioso podem se tornar fardos pesados que nos cansam espiritualmente?",
+                    app: "O descanso que Jesus oferece não é apenas físico, é um descanso para a alma. Você está iniciando este segundo período de Tweens carregando a culpa de erros da semana passada ou a pressão de ter que ser perfeito? Vá até Jesus em oração agora e entregue esse cansaço a Ele."
+                }
+            },
+            {
+                day: 9, date: "10/07", title: "GRAÇA", icon: "🎁", verse: "2Coríntios 12.9",
+                phrase: "A graça sustenta quando a força acaba.",
+                stage: "Dependência de Deus", focus: "Paciência e dependência da graça no início do fim de semana.",
+                period: "Tweens 2", periodDates: "09/07 a 12/07", periodIcon: "🧸", periodColor: "bg-teal-100",
+                meb: {
+                    obs: "Qual foi a resposta direta de Deus ao clamor de Paulo sobre o seu sofrimento? Em qual situação o poder de Deus atinge sua eficácia perfeita?",
+                    int: "Por que Deus prefere usar a nossa fraqueza e as nossas limitações em vez do nosso orgulho autossuficiente para manifestar o Seu poder redentor? Como a percepção da nossa fraqueza abre as portas para a dependência total da graça?",
+                    app: "Talvez hoje você esteja lidando com uma limitação real (dor de cabeça, falta de sono, paciência curta com uma criança difícil). Em vez de reclamar ou tentar fingir que é forte, como você pode se gloriar na sua fraqueza para que o poder de Cristo repouse sobre você nas próximas horas de programação?"
+                }
+            },
+            {
+                day: 10, date: "11/07", title: "MISERICÓRDIA", icon: "🌅", verse: "Lamentações 3.22-23",
+                phrase: "Cada manhã traz graça suficiente para hoje.",
+                stage: "Fidelidade no cansaço", focus: "Penúltimo dia de Tweens 2. Necessidade de renovação espiritual diária.",
+                period: "Tweens 2", periodDates: "09/07 a 12/07", periodIcon: "🧸", periodColor: "bg-teal-100",
+                meb: {
+                    obs: "Por que o profeta afirma que não somos totalmente destruídos? Qual é a frequência com que as misericórdias do Senhor se renovam? Qual é o atributo de Deus exaltado no final?",
+                    int: "Jeremias escreveu essas palavras observando Jerusalém totalmente destruída e queimada. Como a verdade de que as misericórdias de Deus se renovam 'a cada manhã' impede que o peso dos fracassos, erros de comunicação ou impaciência de ontem destruam o seu ministério de hoje?",
+                    app: "Se ontem você falhou — perdeu a paciência, executou mal uma tarefa ou teve atitudes erradas —, hoje é um novo dia. Peça perdão ao Senhor, receba a misericórdia fresca que Ele preparou para esta manhã e sirva com o coração livre de culpas hoje."
+                }
+            },
+            {
+                day: 11, date: "12/07", title: "SOCORRO", icon: "🤝", verse: "Salmo 46.1",
+                phrase: "Deus está presente mesmo nos dias difíceis.",
+                stage: "Fidelidade no cansaço", focus: "Último dia de Tweens. Batalhas finais e preparação para a saída das crianças.",
+                period: "Tweens 2", periodDates: "09/07 a 12/07", periodIcon: "🧸", periodColor: "bg-teal-100",
+                meb: {
+                    obs: "Quais são as três definições que o salmista dá sobre quem Deus é para nós na primeira parte do verso? Em que momentos Ele se revela como um socorro presente?",
+                    int: "O salmista fala de terra se movendo e montes balançando no meio dos mares. Como a certeza teológica de que Deus é o nosso 'refúgio' (onde nos escondemos) e 'fortaleza' (onde somos fortalecidos) nos mantém espiritualmente inabaláveis quando imprevistos de saúde, escala, clima ou infraestrutura acontecem no acampamento?",
+                    app: "Como você lida com os momentos de crise ou quando as coisas fogem do seu controle na programação? Com desespero e mau humor ou correndo para o refúgio da presença de Deus? Exercite parar por alguns segundos na correria de hoje para lembrar a si mesmo: 'Deus é o meu refúgio bem presente hoje'."
+                }
+            },
+            {
+                day: 12, date: "13/07", title: "FIDELIDADE", icon: "📌", verse: "Lucas 16.10",
+                phrase: "Deus valoriza a fidelidade nas pequenas coisas.",
+                stage: "Fidelidade no cansaço", focus: "Chegada dos Teens 1. A importância da integridade nos pequenos detalhes.",
+                period: "Teens 1", periodDates: "13/07 a 17/07", periodIcon: "🎒", periodColor: "bg-indigo-100",
+                meb: {
+                    obs: "Qual é a relação exata que Jesus estabelece entre o comportamento de alguém no 'pouco' (coisas ínfimas) e no 'muito' (coisas grandiosas)?",
+                    int: "Por que a forma como lidamos com tarefas pequenas, corriqueiras e sem visibilidade (como recolher o lixo, chegar no horário combinado na reunião da equipe ou preencher um relatório) é o maior termômetro do nosso caráter diante de Deus?",
+                    app: "Os adolescentes são extremamente observadores e detestam hipocrisia. Se eles virem você negligenciando pequenas ordens da liderança ou fazendo as coisas com preguiça, sua pregação perderá o valor para eles. Como você pode demonstrar fidelidade extrema nas tarefas invisíveis de hoje para honrar o nome de Cristo?"
+                }
+            },
+            {
+                day: 13, date: "14/07", title: "SECRETO", icon: "👁️", verse: "Mateus 6.3-4",
+                phrase: "O Pai vê o serviço que ninguém vê.",
+                stage: "Serviço invisível", focus: "Atuação nos bastidores e combate à vaidade.",
+                period: "Teens 1", periodDates: "13/07 a 17/07", periodIcon: "🎒", periodColor: "bg-indigo-100",
+                meb: {
+                    obs: "Que metáfora corporal Jesus usa para descrever o nível de discrição que devemos ter ao praticar o bem ou o serviço? Qual é a promessa feita sobre a atitude do Pai que vê em secreto?",
+                    int: "Por que o desejo por reconhecimento público, elogios dos líderes ou destaque nas redes sociais do acampamento anula a beleza espiritual do nosso serviço no reino de Deus? De que forma o Evangelho nos satisfaz a ponto de não precisarmos de aplausos humanos?",
+                    app: "Existe alguma tarefa na escala de hoje que você fará torcendo para que um líder veja e elogie? Ore pedindo que o Senhor purifique as suas intenções. Encontre alegria no fato de que o seu Pai celestial vê você em secreto e isso é mais do que suficiente."
+                }
+            },
+            {
+                day: 14, date: "15/07", title: "HUMILDADE", icon: "⬇️", verse: "1Pedro 5.5",
+                phrase: "A humildade nos mantém no lugar certo diante de Deus.",
+                stage: "Serviço invisível", focus: "Convivência e submissão mútua na equipe no meio da temporada.",
+                period: "Teens 1", periodDates: "13/07 a 17/07", periodIcon: "🎒", periodColor: "bg-indigo-100",
+                meb: {
+                    obs: "Qual deve ser a postura dos mais jovens em relação aos mais velhos/líderes? Com qual 'vestimenta' todos da equipe devem se cingir? Qual é a reação oposta de Deus diante de orgulhosos e humildes?",
+                    int: "O termo 'cingir-se' no grego remete ao ato de amarrar o avental de escravo antes de lavar os pés dos convidados (como Jesus fez). Como a humildade mútua blinda a equipe do APV contra fofocas, divisões, melindres e disputas por espaço ou atenção?",
+                    app: "Como você reage internamente quando recebe uma instrução de última hora, uma mudança de escala ou uma correção de um líder de setor? Com rebeldia silenciosa ou submissão alegre? Escolha se revestir do avental do serviço humilde hoje nas relações com seus companheiros."
+                }
+            },
+            {
+                day: 15, date: "16/07", title: "PUREZA", icon: "✨", verse: "Filipenses 2.14-15",
+                phrase: "Nosso testemunho aparece nas atitudes simples.",
+                stage: "Serviço invisível", focus: "Combate à murmuração decorrente do cansaço físico.",
+                period: "Teens 1", periodDates: "13/07 a 17/07", periodIcon: "🎒", periodColor: "bg-indigo-100",
+                meb: {
+                    obs: "Quais são as duas atitudes que Paulo proíbe terminantemente na realização de 'todas as coisas'? Quais são os frutos gerados na vida do cristão que evita essas atitudes?",
+                    int: "'Murmuração' é reclamar em voz baixa pelos cantos; 'contenda' é a discussão aberta e defensiva. Por que o hábito de murmurar do frio, da comida ou da escala destrói o nosso testemunho cristão e apaga o brilho da nossa luz diante de uma geração confusa de adolescentes?",
+                    app: "O cansaço acumulado é o maior gatilho para a reclamação. Policie as suas conversas no alojamento ou no refeitório hoje. Se sentir vontade de reclamar de algo, mude o foco e declare três motivos de gratidão a Deus. Seja luz através de uma atitude alegre e sem queixas hoje!"
+                }
+            },
+            {
+                day: 16, date: "17/07", title: "MANSIDÃO", icon: "💬", verse: "Provérbios 15.1",
+                phrase: "Palavras brandas preservam relacionamentos.",
+                stage: "Serviço invisível", focus: "Encerramento de Teens 1. Paciência no trato verbal sob pressão.",
+                period: "Teens 1", periodDates: "13/07 a 17/07", periodIcon: "🎒", periodColor: "bg-indigo-100",
+                meb: {
+                    obs: "Qual é a consequência direta de uma 'resposta branda'? Em contrapartida, qual é o efeito gerado pela 'palavra dura'?",
+                    int: "Mansidão não é fraqueza, mas sim o poder sob o controle do Espírito Santo. De que maneira as nossas respostas ríspidas, sarcásticas ou impacientes sob estresse de fim de semana revelam que estamos tentando defender nosso próprio ego em vez de refletir o amor paciente de Cristo?",
+                    app: "Os adolescentes costumam testar limites através de perguntas difíceis, ironias ou atitudes rebeldes. Como você responderá se um acampante ou colega de equipe for rude com você hoje? Decida, sob o controle do Espírito, usar palavras mansas que curam em vez de machucar."
+                }
+            },
+            {
+                day: 17, date: "18/07", title: "CONSTÂNCIA", icon: "🛣️", verse: "Gálatas 6.9",
+                phrase: "Persistir no bem é sinal de fé madura.",
+                stage: "Testemunho e relacionamentos", focus: "Início do último grupo de Teens. Combate à fadiga espiritual e inércia.",
+                period: "Teens 2", periodDates: "18/07 a 22/07", periodIcon: "🎒", periodColor: "bg-violet-100",
+                meb: {
+                    obs: "Qual é a exortação prática sobre 'fazer o bem'? Qual é a condição temporal e espiritual estabelecida para colhermos os frutos?",
+                    int: "A expressão 'não desfalecer' significa não perder o ânimo ou relaxar o esforço. Por que tendemos a desanimar quando não vemos frutos espirituais imediatos nos adolescentes? Como a perseverança de Cristo, que foi fiel até a morte, nos sustenta a continuar semeando hoje?",
+                    app: "O entusiasmo do início da temporada já passou e o corpo pede descanso. Mas uma nova turma de Teens acabou de chegar e eles merecem o mesmo amor e dedicação do primeiro dia de acampamento. Onde você precisa renovar sua persistência hoje para não fazer o seu trabalho de qualquer jeito?"
+                }
+            },
+            {
+                day: 18, date: "19/07", title: "EXEMPLO", icon: "👣", verse: "1Timóteo 4.12",
+                phrase: "Somos chamados a viver a fé visivelmente.",
+                stage: "Testemunho e relacionamentos", focus: "Integridade prática diante de jovens que buscam referências.",
+                period: "Teens 2", periodDates: "18/07 a 22/07", periodIcon: "🎒", periodColor: "bg-violet-100",
+                meb: {
+                    obs: "O que Paulo diz para Timóteo não permitir que façam com ele? Em quais cinco áreas específicas ele deve se tornar um padrão/exemplo para os fiéis?",
+                    int: "Timóteo era jovem e enfrentava preconceitos. Como o nosso comportamento prático e silencioso (especialmente na palavra, no procedimento e no amor) valida e dá autoridade espiritual às mensagens e conselhos bíblicos que damos aos adolescentes?",
+                    app: "Os Teens estão o tempo todo avaliando se o que falamos nas devocionais do quarto combina com o que fazemos nas horas livres. Qual dessas cinco áreas mencionadas por Paulo (palavra, procedimento, amor, fé, pureza) precisa de uma intervenção urgente do Espírito Santo na sua vida hoje?"
+                }
+            },
+            {
+                day: 19, date: "20/07", title: "LUZ", icon: "💡", verse: "Mateus 5.16",
+                phrase: "Nossa vida aponta para a glória de Deus.",
+                stage: "Testemunho e relacionamentos", focus: "Atitude evangelística e direcionamento da glória para o Pai.",
+                period: "Teens 2", periodDates: "18/07 a 22/07", periodIcon: "🎒", periodColor: "bg-violet-100",
+                meb: {
+                    obs: "De qual maneira a nossa luz deve brilhar diante das pessoas? Qual deve ser a reação natural delas ao contemplarem as nossas boas obras?",
+                    int: "Brilhar a nossa luz não significa exibir uma espiritualidade orgulhosa para sermos elogiados, mas sim refletir o caráter de Cristo. De que forma o orgulho de querermos ser considerados os 'melhores conselheiros' ou os mais 'legais' rouba a glória que pertence unicamente a Deus?",
+                    app: "Quando os acampantes começam a se apegar a você ou elogiar sua dedicação, como você direciona esse carinho? Ore hoje pedindo que cada sorriso, abraço e palavra sua sirva como uma seta apontando os adolescentes para a beleza do Pai celestial, e não para você."
+                }
+            },
+            {
+                day: 20, date: "21/07", title: "SUPORTE", icon: "🔗", verse: "Romanos 15.1",
+                phrase: "Servimos melhor quando carregamos uns aos outros.",
+                stage: "Testemunho e relacionamentos", focus: "Meio de semana. Cuidado mútuo na reta final quando o estresse aumenta.",
+                period: "Teens 2", periodDates: "18/07 a 22/07", periodIcon: "🎒", periodColor: "bg-violet-100",
+                meb: {
+                    obs: "Qual é o dever explícito dos que são fortes em relação às fraquezas dos fracos? O que os fortes devem evitar fazer em relação a si mesmos?",
+                    int: "'Suportar' aqui significa carregar ativamente o fardo de alguém, ajudando-o a caminhar. Como o sacrifício de Jesus Cristo — que carregou sobre si as nossas dores e enfermidades espirituais — nos dá a base teológica para tolerar e ajudar os irmãos de equipe cansados ou irritados?",
+                    app: "Há algum companheiro no seu setor que está visivelmente esgotado, cometendo erros simples ou isolado? Em vez de criticar ou comentar com terceiros (fofoca), o que você pode fazer hoje na prática para ajudá-lo a carregar o fardo das tarefas diárias?"
+                }
+            },
+            {
+                day: 21, date: "22/07", title: "AMOR", icon: "❤️", verse: "João 13.34-35",
+                phrase: "O amor é a marca mais visível do discípulo.",
+                stage: "Perseverança até o fim", focus: "Último dia com acampantes. Despedida dos Teens 2 e noite de decisões.",
+                period: "Teens 2", periodDates: "18/07 a 22/07", periodIcon: "🎒", periodColor: "bg-violet-100",
+                meb: {
+                    obs: "Qual é o 'novo mandamento' que Jesus deixa para Seus seguidores? Qual é a régua/padrão que Ele estabelece para esse amor? O que esse amor mútuo revelará publicamente ao mundo?",
+                    int: "Por que o amor mútuo dentro de uma equipe ministerial é a ferramenta apologética e evangelística mais poderosa diante dos adolescentes do acampamento, muito mais do que qualquer palestra ou estrutura de som?",
+                    app: "Hoje é o dia de despedida dos acampantes e noite de apelo/decisões. O cansaço físico está no limite máximo. Como você demonstrará o amor de Cristo de forma prática para os acampantes do seu quarto e para os colegas de setor hoje, mesmo estando exausto?"
+                }
+            },
+            {
+                day: 22, date: "23/07", title: "RECOMPENSA", icon: "🏆", verse: "Hebreus 6.10",
+                phrase: "Deus não se esquece de nenhum serviço fiel.",
+                stage: "Perseverança até o fim", focus: "Último dia da equipe. Fechamento e envio para a igreja local.",
+                period: "Despedida da Equipe", periodDates: "23/07", periodIcon: "🌅", periodColor: "bg-amber-100",
+                meb: {
+                    obs: "O que o autor de Hebreus afirma que Deus não é, garantindo que Ele jamais esquecerá o nosso trabalho? Quais são as duas evidências de amor que o povo de Deus demonstrou ao Seu nome?",
+                    int: "No contexto do acampamento, muitas lágrimas foram choradas em secreto, orações foram feitas de joelhos no chão frio e tarefas exaustivas foram cumpridas sem que nenhum líder humano visse. Como a justiça perfeita de Deus conforta o nosso coração de que nada foi desperdiçado ou em vão?",
+                    app: "A temporada acabou, as malas estão prontas e o cansaço é real. Ao olhar para trás hoje, você tem a convicção de ter servido ao Senhor com integridade? Como saber que Deus se lembra de cada pequeno ato de amor te motiva a continuar servindo com fidelidade na sua igreja local, na faculdade ou na sua rotina diária a partir de amanhã?"
+                }
+            }
+        ];
+
+        let currentActiveDay = null;
+
+        function initApp() {
+            renderChart();
+            renderCalendar();
+            
+            // Tenta restaurar o progresso salvo no localStorage
+            const savedDay = localStorage.getItem('apv_last_day');
+            if (savedDay) {
+                openDevotional(parseInt(savedDay), false);
+            }
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Preparação e Leitura (5m)', 'Meditação MEB (15m)', 'Oração e Resposta (10m)'],
+                    datasets: [{
+                        data: [5, 15, 10],
+                        backgroundColor: [
+                            '#94a3b8', 
+                            '#3b82f6', 
+                            '#f59e0b'  
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    family: "'system-ui', 'sans-serif'"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label.split(' (')[0] + ': ' + context.raw + ' minutos';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
             });
         }
 
-        // FUNÇÕES DO SIMULADOR DE IMPACTO LOCAL (DINÂMICO)
-        function calculateImpact() {
-            const groupSizeInput = document.getElementById('group-size');
-            const groupSlider = document.getElementById('group-slider');
+        function renderCalendar() {
+            const container = document.getElementById('calendar-container');
+            const periods = [...new Set(devotionals.map(item => item.period))];
+
+            periods.forEach(periodName => {
+                const periodDevos = devotionals.filter(d => d.period === periodName);
+                const pColor = periodDevos[0].periodColor;
+                const pIcon = periodDevos[0].periodIcon;
+                const pDates = periodDevos[0].periodDates;
+
+                const card = document.createElement('div');
+                card.className = `border border-slate-200 rounded-xl overflow-hidden flex flex-col shadow-sm hover:shadow-md transition-all duration-200`;
+                
+                let buttonsHTML = '';
+                periodDevos.forEach(devo => {
+                    buttonsHTML += `
+                        <button id="devo-btn-${devo.day}" onclick="openDevotional(${devo.day}, true)" class="w-full text-left px-4 py-3 border-t border-slate-100 hover:bg-slate-100/50 flex justify-between items-center group transition-all">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 block">DIA ${devo.day} • ${devo.date}</span>
+                                <span class="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">${devo.icon} ${devo.title}</span>
+                            </div>
+                            <span class="text-slate-300 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all">➔</span>
+                        </button>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="${pColor} px-4 py-3 border-b border-slate-200">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${pIcon}</span>
+                            <div>
+                                <h3 class="font-bold text-slate-800 leading-tight">${periodName}</h3>
+                                <span class="text-xs font-semibold text-slate-600">${pDates}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 flex-grow">
+                        ${buttonsHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openDevotional(dayNumber, shouldScroll = true) {
+            const devo = devotionals.find(d => d.day === dayNumber);
+            if (!devo) return;
+
+            currentActiveDay = dayNumber;
+            localStorage.setItem('apv_last_day', dayNumber);
+
+            // Destaca o dia ativo na listagem de cards
+            devotionals.forEach(d => {
+                const button = document.getElementById(`devo-btn-${d.day}`);
+                if (button) {
+                    if (d.day === dayNumber) {
+                        button.classList.add('bg-blue-50', 'border-l-4', 'border-l-blue-600');
+                    } else {
+                        button.classList.remove('bg-blue-50', 'border-l-4', 'border-l-blue-600');
+                    }
+                }
+            });
+
+            // Carrega dados no leitor
+            document.getElementById('read-period').textContent = devo.period;
+            document.getElementById('read-title').innerHTML = `${devo.icon} ${devo.title}`;
+            document.getElementById('read-date').textContent = `Dia ${devo.day} • ${devo.date}`;
+            document.getElementById('read-verse').textContent = devo.verse;
+            document.getElementById('read-phrase').textContent = `"${devo.phrase}"`;
+            document.getElementById('read-stage').textContent = devo.stage;
+            document.getElementById('read-focus').textContent = devo.focus;
             
-            let val = parseInt(groupSizeInput.value) || 0;
-            if (val < 0) val = 0;
+            document.getElementById('read-obs').textContent = devo.meb.obs;
+            document.getElementById('read-int').textContent = devo.meb.int;
+            document.getElementById('read-app').textContent = devo.meb.app;
 
-            // Sincronizar slider
-            groupSlider.value = val;
+            // Configura a visibilidade e lógica das setas direcionais de navegação
+            const prevBtn = document.getElementById('nav-prev-btn');
+            const nextBtn = document.getElementById('nav-next-btn');
+            const upBtn = document.getElementById('nav-up-btn');
 
-            // Fórmulas baseadas nas estatísticas consolidadas da pesquisa
-            const finstaEst = Math.round(val * 0.511); // 51.1% estimam que >70% tem (usando estimativa conservadora do total)
-            const exposicaoEst = Math.round(val * 0.587); // 58.7% tiveram contato < 13 anos
-            const despreparoEst = Math.round(val * (0.66 + 0.149 + 0.085)); // Parcialmente + Inseguro + Despreparado
+            if (dayNumber === 1) {
+                prevBtn.classList.add('invisible');
+            } else {
+                prevBtn.classList.remove('invisible');
+                prevBtn.onclick = () => openDevotional(dayNumber - 1, true);
+            }
 
-            document.getElementById('calc-finsta').innerText = finstaEst;
-            document.getElementById('calc-exposicao').innerText = exposicaoEst;
+            if (dayNumber === devotionals.length) {
+                nextBtn.classList.add('invisible');
+            } else {
+                nextBtn.classList.remove('invisible');
+                nextBtn.onclick = () => openDevotional(dayNumber + 1, true);
+            }
+
+            upBtn.onclick = () => {
+                window.scrollTo({top: document.getElementById('calendar-container').offsetTop - 40, behavior: 'smooth'});
+            };
+
+            const readerSection = document.getElementById('reader-section');
+            readerSection.classList.remove('hidden');
             
-            // Proporção de líderes necessários na igreja para cuidar desse grupo (ex: 1 líder para cada 10 jovens)
-            const lideresNecessarios = Math.max(1, Math.round(val / 10));
-            const lideresSemMetodo = Math.round(lideresNecessarios * 0.66);
-            document.getElementById('calc-despreparo').innerText = `${lideresSemMetodo} de ${lideresNecessarios}`;
+            if (shouldScroll) {
+                readerSection.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
-        function syncSlider() {
-            const groupSizeInput = document.getElementById('group-size');
-            const groupSlider = document.getElementById('group-slider');
-            groupSizeInput.value = groupSlider.value;
-            calculateImpact();
-        }
-
-        // STARTUP
-        window.onload = function() {
-            renderAllCharts();
-            calculateImpact();
-        }
+        window.onload = initApp;
     </script>
 </body>
 </html>
